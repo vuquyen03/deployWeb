@@ -26,7 +26,7 @@ const Dictionary = () => {
             setSubmitValue(searchTerm.toLowerCase());
             try {
                 const response = await axios.get(
-                    process.env.REACT_APP_API_DICTIONARY + `/${searchTerm}`
+                    import.meta.env.VITE_APP_API_DICTIONARY+ `/${searchTerm}`
                 );
                 const data = response.data;
                 setWord(data[0].word);

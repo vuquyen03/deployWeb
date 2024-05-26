@@ -34,7 +34,7 @@ const QuizPage = () => {
     useEffect(() => {
         const fetchQuiz = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/quiz/questions/${quizId}`, { withCredentials: true });
+                const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/quiz/questions/${quizId}`, { withCredentials: true });
                 if (response.status === 200) {
                     const questions = response.data.question;
                     setLoading(false);
@@ -57,6 +57,10 @@ const QuizPage = () => {
             element.classList.add('visible');
         }
     }, [quizComplete]);
+
+    if (!loggedIn) {
+        return <Navigate to="/login" />;
+    }
 
     const randomQuestion = (questions) => {
         if (questions.length === 0) return;
@@ -147,7 +151,7 @@ const QuizPage = () => {
         try {
             const xp = correctQuestions * 10 / numberOfQuestions;
             if (xp >= requiredXp) {
-                const response = await axios.put(`${process.env.REACT_APP_API_URL}/user/update-experience`,
+                const response = await axios.put(`${import.meta.env.VITE_APP_API_URL}/user/update-experience`,
                     {
                         experience: xp
                     },

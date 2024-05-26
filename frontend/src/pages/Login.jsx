@@ -78,7 +78,7 @@ const Login = () => {
             try {
                 setLoading(true); // set loading true before making the request
                 const response = await axios.post(
-                    process.env.REACT_APP_API_URL + '/user/login',
+                    import.meta.env.VITE_APP_API_URL + '/user/login',
                     inputData,
                     { withCredentials: true, timeout: 5000}
                 );
@@ -213,7 +213,7 @@ const Login = () => {
                     <ReCAPTCHA
                         ref={recaptchaRef}
                         className="mt-3"
-                        sitekey= {process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                        sitekey= {import.meta.env.VITE_APP_RECAPTCHA_SITE_KEY}
                         onChange={handleRecaptchaChange}
                         theme="light"
                     />)

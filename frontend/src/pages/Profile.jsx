@@ -56,7 +56,7 @@ const Profile = () => {
 
         try {
             const response = await axios.put(
-                `${process.env.REACT_APP_API_URL}/user/profile`,
+                `${import.meta.env.VITE_APP_API_URL}/user/profile`,
                 inputData,
                 { withCredentials: true,
                     headers: {
@@ -95,13 +95,12 @@ const Profile = () => {
 
         if (submitLoading) return;
         setSubmitLoading(true);
-
         const formData = new FormData(formRef.current);
         const inputData = Object.fromEntries(formData.entries());
 
         try {
             const response = await axios.put(
-                `${process.env.REACT_APP_API_URL}/user/change-password`,
+                `${import.meta.env.VITE_APP_API_URL}/user/change-password`,
                 inputData,
                 {
                     withCredentials: true,

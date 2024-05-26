@@ -10,6 +10,7 @@ import question from './src/routes/questionRoute.js';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import logger from './src/logger/logger.js';
+import { limiters } from './src/middlewares/rateLimit/rate-limit.js';
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use(
   );
 app.use(cookieParser()); 
 app.use(morgan('dev'));
+app.use(limiters);
 
 // // Set up logger
 // app.use(morgan('combined', {
@@ -36,7 +38,6 @@ app.use(morgan('dev'));
 //     write: message => logger.info(message.trim())
 //   }
 // }));
-
 
 // Middleware to set Cache-Control headers
 app.use((req, res, next) => {

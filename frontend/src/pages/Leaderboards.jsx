@@ -15,7 +15,7 @@ const Leaderboards = () => {
         const fetchUser = async () => {
             setFetchLoading(true);
             try {
-                const response = await axios.get(process.env.REACT_APP_API_URL + "/user/experience", { withCredentials: true });
+                const response = await axios.get(import.meta.env.VITE_APP_API_URL + "/user/experience", { withCredentials: true });
                 const allUsers = response.data.items;
                 const sortedData = allUsers.sort((a, b) => b.experience - a.experience);
                 

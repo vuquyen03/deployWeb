@@ -1,7 +1,8 @@
+import React from 'react';
 import { BrowserRouter} from 'react-router-dom';
-import MainSection from './pages/MainSection.js';
+import MainSection from './pages/MainSection';
 
-function App() {
+const App = () => {
   return (
     <BrowserRouter>
       <MainSection />

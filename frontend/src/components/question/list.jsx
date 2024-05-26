@@ -1,5 +1,5 @@
 import { Datagrid, EditButton, List, TextField, DeleteButton, ReferenceField, ChipField, SimpleList, ArrayField } from "react-admin"
-import { useMediaQuery, Theme } from "@mui/material";
+import { useMediaQuery } from "@mui/material";
 
 
 const QuestionList = () => {

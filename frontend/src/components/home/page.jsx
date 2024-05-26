@@ -34,23 +34,23 @@ export const Dashboard = () => {
 
         if (submitLoading) return;
         setSubmitLoading(true);
-        
         const formData = new FormData(formRef.current);
         const inputData = Object.fromEntries(formData.entries());
 
         try {
             const response = await axios.put(
-                `${process.env.REACT_APP_API_URL}/user/change-password`,
+                `${import.meta.env.VITE_APP_API_URL}/user/change-password`,
                 inputData,
-                { withCredentials: true, 
+                {
+                    withCredentials: true,
                     headers: {
                         'X-CSRF-Token': localStorage.getItem('csrfToken')
                     }
-                 }
+                }
             );
 
             if (response.status === 200) {
-                localStorage.setItem('csrfToken', response.headers['x-csrf-token'])
+                localStorage.setItem('csrfToken', response.headers['x-csrf-token']);
                 closeChangePasswordPopup();
             }
 
@@ -59,24 +59,18 @@ export const Dashboard = () => {
             const csrfToken = error.response.headers['x-csrf-token'];
             localStorage.setItem('csrfToken', csrfToken);
 
-            const errorMessage = error.response.data.message;
-            switch (true) {
-                case errorMessage.includes('Incorrect old password'):
-                    setErrorMessage('Incorrect old password');
+            let errorMessage = error.response.data.message;
+            switch (errorMessage) {
+                case undefined || null:
+                    errorMessage = 'Something went wrong';
                     break;
-                case errorMessage.includes('Password is too weak'):
-                    setErrorMessage('Password must be 8+ characters with uppercase, lowercase, number, and special character');
-                    break;
-                case errorMessage.includes('Password does not match'):
-                    setErrorMessage('Password does not match');
-                    break;
-                case errorMessage.includes('Password has been used before'):
-                    setErrorMessage('Password has been used before');
+                case 'Password is too weak':
+                    errorMessage = 'Password must be 8+ characters with uppercase, lowercase, number, and special character';
                     break;
                 default:
-                    setErrorMessage('Something went wrong');
                     break;
             }
+            setErrorMessage(errorMessage);
         } finally {
             setSubmitLoading(false);
         }

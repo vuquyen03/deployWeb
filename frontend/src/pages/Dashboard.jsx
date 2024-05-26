@@ -21,7 +21,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const response = await axios.get(process.env.REACT_APP_API_URL + '/course/all', { withCredentials: true });
+                const response = await axios.get(import.meta.env.VITE_APP_API_URL + '/course/all', { withCredentials: true });
                 if (response.status === 200) {
                     setCourses(response.data.items);
                     // console.log('Courses:', response.data.items);
@@ -37,7 +37,7 @@ const Dashboard = () => {
         console.log('Resend email');
         try {
             const response = await axios.post(
-                process.env.REACT_APP_API_URL + '/user/resend-email', 
+                import.meta.env.VITE_APP_API_URL + '/user/resend-email', 
                 { email: userData.email }, 
                 { withCredentials: true });
             if (response.status === 200) {

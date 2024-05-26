@@ -1,6 +1,5 @@
 import {
     Create,
-    ReferenceInput,
     SimpleForm,
     TextInput,
     required,

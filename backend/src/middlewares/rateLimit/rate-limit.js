@@ -24,3 +24,11 @@ export const registerRateLimiter = rateLimit({
         new RateLimitError({ message: 'Too many registration attempts from this IP, please try again after 15 minutes', req }).send(res);
     },
 });
+
+export const limiters = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 150, // limit each IP to 100 requests per windowMs
+    handler: (req, res) => {
+        new RateLimitError({ message: 'Too many requests from this IP, please try again after 15 minutes', req }).send(res);
+    },
+});

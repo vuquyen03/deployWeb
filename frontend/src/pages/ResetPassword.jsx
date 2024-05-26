@@ -25,7 +25,7 @@ const ResetPassword = () => {
         // Send form data to the server
         try {
             const response = await axios.post(
-                `${process.env.REACT_APP_API_URL}/user/reset-password/${token}`,
+                `${import.meta.env.VITE_APP_API_URL}/user/reset-password/${token}`,
                 inputData);
 
             if (response.status === 200) {
@@ -118,18 +118,6 @@ const ResetPassword = () => {
                         {errorMessage}
                     </p>
                 )}
-
-
-                {/* {numberOfLoginAttempts >= 5 && (
-                    <ReCAPTCHA
-                        ref={recaptchaRef}
-                        className="mt-3"
-                        sitekey= {process.env.REACT_APP_RECAPTCHA_SITE_KEY}
-                        onChange={handleRecaptchaChange}
-                        theme="light"
-                    />)
-                } */}
-    
                 
                 {/* Submit Button */}
                 <button

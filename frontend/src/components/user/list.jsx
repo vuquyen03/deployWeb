@@ -1,4 +1,4 @@
-import { useMediaQuery, Theme } from "@mui/material";
+import { useMediaQuery } from "@mui/material";
 import React from "react";
 import {
     List,
