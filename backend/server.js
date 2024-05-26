@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
     cors({
       credentials: true, 
-      origin: true,
+      origin: 'https://deploy-web-client.vercel.app',
       allowedHeaders: ['Content-Type', 'X-Csrf-Token'],
       exposedHeaders: ['X-Csrf-Token'],
     })
