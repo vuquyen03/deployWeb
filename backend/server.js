@@ -29,13 +29,9 @@ app.use(
     })
   );
 app.use(cookieParser()); 
-// app.use(morgan('dev'));
 app.use(limiters);
 app.use((req, res, next) => {
-  const ip = req.socket.remoteAddress;
-  console.log('req.socket.remoteAddress', req.socket.remoteAddress)
-  console.log("req.headers['x-forwarded-for']", req.headers['x-forwarded-for'])
-  console.log("req.connection.remoteAddress", req.connection.remoteAddress)
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   console.log(`IP người truy cập: ${ip}`); // Ghi lại địa chỉ IP
   next(); // Chuyển tiếp yêu cầu
 });
