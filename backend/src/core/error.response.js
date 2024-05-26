@@ -20,8 +20,9 @@ class ErrorResponse extends Error {
         this.logLevel = logLevel;
 
         const urlRequest = this.req.headers.referer || '-'
+        const ip = this.req.headers['x-forwarded-for'] || this.req.connection.remoteAddress;
         // Log the error message including IP, method, URL, status code, and message
-        const logMessage = `${this.req.ip} - - "${this.req.method} ${this.req.originalUrl} HTTP/${this.req.httpVersion}" ${this.statusCode} - "${urlRequest}" "${this.req.headers['user-agent']}" "${this.message}"`;
+        const logMessage = `${ip} - - "${this.req.method} ${this.req.originalUrl} HTTP/${this.req.httpVersion}" ${this.statusCode} - "${urlRequest}" "${this.req.headers['user-agent']}" "${this.message}"`;
         logger[this.logLevel](logMessage);
     }
 
