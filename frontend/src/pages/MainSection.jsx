@@ -82,6 +82,8 @@ const MainSection = () => {
                                 )}
                             </>
                         )}
+                        {/* Protected routes */}
+                        {loggedIn && userRole === 'admin' && <Route path="/adminPanel/*" element={<AdminPanel />} />}
 
                         {/* Invalid routes */}
                         <Route path="*" element={<InvalidRouteHandler />} />
