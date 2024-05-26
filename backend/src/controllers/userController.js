@@ -85,7 +85,7 @@ const userController = {
                     let verificationToken = crypto.randomBytes(32).toString('hex');
                     const newUser = new User({ username, email, password, verifyToken: verificationToken });
                     await newUser.save();
-                    res.cookie('verificationToken', verificationToken, { httpOnly: true, secure: true, sameSite: 'Lax', maxAge: 1000 * 60 * 30 }); 
+                    res.cookie('verificationToken', verificationToken, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 1000 * 60 * 30 }); 
     
                     // send verification email
                     const verificationUrl = `${process.env.SERVER_URL}/user/verify-email/${verificationToken}`;
@@ -181,7 +181,7 @@ const userController = {
             const option = {
                 httpOnly: true,
                 secure: true,
-                sameSite: "Lax",
+                sameSite: "None",
             };
     
             new SuccessResponse({ message: 'Logged Out Successfully', req });
@@ -387,7 +387,7 @@ const userController = {
             let verificationToken = crypto.randomBytes(32).toString('hex');
             user.verifyToken = verificationToken;
             await user.save();
-            res.cookie('verificationToken', verificationToken, { httpOnly: true, secure: true, sameSite: 'Lax', maxAge: 1000 * 60 * 60 * 2 });
+            res.cookie('verificationToken', verificationToken, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 1000 * 60 * 60 * 2 });
 
             // send verification email
             const verificationUrl = `${process.env.SERVER_URL}/user/verify-email/${verificationToken}`;

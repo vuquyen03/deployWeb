@@ -15,7 +15,7 @@ const csrfMiddleware = (req, res, next) => {
     res.cookie('csrfSecret', csrfSecret, {
         httpOnly: true,
         secure: true,
-        sameSite: 'Lax',
+        sameSite: 'None',
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * parseInt(process.env.REFRESH_TOKEN_EXPIRY)), // Should match the refresh token expiry
     });
 

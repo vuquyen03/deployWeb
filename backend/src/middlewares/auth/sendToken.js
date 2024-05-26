@@ -7,14 +7,14 @@ export const sendToken = async (res, user, accessToken, refreshToken, message, s
     await res.cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: true,
-        sameSite: 'Lax',
+        sameSite: 'None',
         expires: new Date(Date.now() + 1000 * 60 * parseInt(process.env.ACCESS_TOKEN_EXPIRY)), // accessToken is used during minutes
     });
 
     await res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: true,
-        sameSite: 'Lax',
+        sameSite: 'None',
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * parseInt(process.env.REFRESH_TOKEN_EXPIRY)), // refreshToken is used during days 
     });
 
