@@ -29,15 +29,15 @@ app.use(
     })
   );
 app.use(cookieParser()); 
-app.use(morgan('dev'));
+// app.use(morgan('dev'));
 app.use(limiters);
 
 // // Set up logger
-// app.use(morgan('combined', {
-//   stream: {
-//     write: message => logger.info(message.trim())
-//   }
-// }));
+app.use(morgan('combined', {
+  stream: {
+    write: message => logger.info(message.trim())
+  }
+}));
 
 // Middleware to set Cache-Control headers
 app.use((req, res, next) => {
