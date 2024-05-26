@@ -32,7 +32,7 @@ app.use(cookieParser());
 // app.use(morgan('dev'));
 app.use(limiters);
 app.use((req, res, next) => {
-  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const ip = req.socket.remoteAddress;
   console.log(`IP người truy cập: ${ip}`); // Ghi lại địa chỉ IP
   next(); // Chuyển tiếp yêu cầu
 });
