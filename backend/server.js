@@ -31,6 +31,11 @@ app.use(
 app.use(cookieParser()); 
 // app.use(morgan('dev'));
 app.use(limiters);
+app.use((req, res, next) => {
+  const ip = req.ip; // Lấy địa chỉ IP của người truy cập
+  console.log(`IP người truy cập: ${ip}`); // Ghi lại địa chỉ IP
+  next(); // Chuyển tiếp yêu cầu
+});
 
 // // Set up logger
 app.use(morgan('combined', {
