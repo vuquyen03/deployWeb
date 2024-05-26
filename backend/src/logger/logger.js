@@ -13,8 +13,8 @@ const logger = createLogger({
     ),
     transports: [
         new transports.Console(),
-        new transports.File({ dirname: 'logs', filename: 'error.log', level: 'error' }),
-        new transports.File({ dirname: 'logs', filename: 'combined.log' })
+        // new transports.File({ dirname: 'logs', filename: 'error.log', level: 'error' }),
+        // new transports.File({ dirname: 'logs', filename: 'combined.log' })
     ],
 });
 
