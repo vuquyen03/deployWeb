@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import Progress from '../models/Progress.js';
 import jwt from 'jsonwebtoken';
 import { sendToken } from '../middlewares/auth/sendToken.js';
 import bcrypt from 'bcrypt';
@@ -85,6 +86,15 @@ const userController = {
                     let verificationToken = crypto.randomBytes(32).toString('hex');
                     const newUser = new User({ username, email, password, verifyToken: verificationToken });
                     await newUser.save();
+
+                    // Create a progress document for the new user
+                    await Progress.create({
+                        user: newUser._id,
+                        completedQuizzes: [],
+                        totalScore: 0,
+                        totalCompletedQuizzes: 0,
+                    })
+
                     res.cookie('verificationToken', verificationToken, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 1000 * 60 * 30 }); 
     
                     // send verification email
@@ -263,7 +273,6 @@ const userController = {
     getProfile: async (req, res) => {
         try {
             const userId = req.user._id;
-            console.log(req.user);
             const user = await User.findById(userId).select('username role experience createdAt');
             if (!user) {
                 throw new NotFound({ message: 'User not found', req }, 'info');
@@ -567,40 +576,6 @@ const userController = {
     },
 
     // Method: PUT
-    // Path: /user/update-experience/
-    updateExperience: async (req, res) => {
-        try {
-            const userId = req.user._id;
-            const { experience } = req.body;
-
-            console.log(experience  + ' ' + userId)
-
-            // Check if the user's experience is required
-            const requiredExperience = 8;
-            if (experience < requiredExperience) {
-                throw new BadRequest({ message: `Experience must be at least ${requiredExperience}`, req }, 'info');
-            }
-            
-            const user = await User.findById(userId);
-            if (!user) {
-                throw new NotFound({ message: 'User not found', req }, 'info');
-            }
-
-            if (!experience) {
-                throw new BadRequest({ message: 'Experience is required', req }, 'info');
-            }
-
-            // add experience
-            user.experience += experience;
-
-            await user.save();
-            return new SuccessResponse({ message: 'Experience updated successfully', req }).send(res);
-        } catch (error) {
-            return res.status(error.statusCode || 500).json({ message: error.message });
-        }
-    },
-
-    // Method: PUT
     // Path: /user/edit/:id
     adminEditUser: async (req, res) => {
         try {
@@ -639,7 +614,11 @@ const userController = {
     adminDeleteAccount: async (req, res) => {
         try {
             const userId = req.params.id;
-            await User.findByIdAndDelete(userId);
+            await Promise.all([
+                User.findByIdAndDelete(userId),
+                Progress.deleteOne({ user: userId })
+            ])
+    
             new SuccessResponse({ message: 'Account deleted successfully', req }).send(res);
         } catch (error) {
             return new InternalServerError({ message: error.message, req }).send(res);
@@ -651,7 +630,11 @@ const userController = {
     adminDeleteManyAccount: async (req, res) => {
         try {
             const userIds = req.body.ids;
-            await User.deleteMany({ _id: { $in: userIds } });
+            await Promise.all([
+                User.deleteMany({ _id: { $in: userIds } }),
+                Progress.deleteMany({ user: { $in: userIds } })
+            ]);
+
             new SuccessResponse({ message: 'Accounts deleted successfully', req }).send(res);
         } catch (error) {
             return handleErrorResponse(error, req, res);

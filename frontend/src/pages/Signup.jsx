@@ -8,6 +8,7 @@ import { checkStatus, setUserRole } from '../redux/actions/userActions';
 import { HiEye, HiEyeOff } from 'react-icons/hi';
 import { AiOutlineLoading } from 'react-icons/ai';
 import ReCAPTCHA from 'react-google-recaptcha';
+import DOMPurify from 'dompurify';
 
 
 /**
@@ -46,6 +47,13 @@ const Signup = () => {
         e.preventDefault();
         const formData = new FormData(formRef.current);
         const inputData = Object.fromEntries(formData.entries());
+        const email = DOMPurify.sanitize(inputData.email);
+
+        const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}/
+        if (!emailRegex.test(email)) {
+            setErrorMessage('Invalid email address');
+            return;
+        } 
 
         if (isVerified){
             try {

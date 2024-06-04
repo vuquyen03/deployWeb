@@ -1,6 +1,7 @@
 import Course from "../models/Course.js";
 import Quiz from "../models/Quiz.js";
 import Question from "../models/Question.js";
+import Progress from "../models/Progress.js";
 import { BadRequest, NotFound } from "../core/error.response.js";
 import { SuccessResponse, Created } from "../core/success.response.js";
 import { handleErrorResponse } from "../helper/handleErrorResponse.js";
@@ -161,6 +162,11 @@ const quizController = {
                 { $unset: { quiz: 1 } }
             );
 
+            await Progress.updateMany(
+                { 'completedQuizzes.quizId': quizId },
+                { $pull: { completedQuizzes: { quizId: quizId } } }
+            );
+
             await Quiz.findByIdAndDelete(quizId);
             return new SuccessResponse({ message: "Quiz deleted successfully", req }).send(res);
         } catch (error) {
@@ -190,6 +196,11 @@ const quizController = {
             await Question.updateMany(
                 { quiz: { $in: quizIds } },
                 { $unset: { quiz: 1 } }
+            );
+
+            await Progress.updateMany(
+                { 'completedQuizzes.quizId': { $in: quizIds } },
+                { $pull: { completedQuizzes: { quizId: { $in: quizIds } } } }
             );
 
             await Quiz.deleteMany({ _id: { $in: quizIds } });

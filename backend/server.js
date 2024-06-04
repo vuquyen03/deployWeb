@@ -7,6 +7,7 @@ import user from './src/routes/userRoute.js';
 import course from './src/routes/courseRoute.js';
 import quiz from './src/routes/quizRoute.js';
 import question from './src/routes/questionRoute.js';
+import progress from './src/routes/progressRoute.js';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import logger from './src/logger/logger.js';
@@ -89,6 +90,7 @@ app.use('/api/v1/user', user);
 app.use('/api/v1/course', course);
 app.use('/api/v1/quiz', quiz);
 app.use('/api/v1/question', question);  
+app.use('/api/v1/progress', progress); 
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

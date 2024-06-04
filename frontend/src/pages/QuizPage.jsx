@@ -11,9 +11,12 @@ import CompleteScreen from './CompleteScreen';
 import Button from '../components/Button';
 import { BsArrowClockwise } from 'react-icons/bs';
 import axios from "axios";
+import heart from '../assets/heart.png';
+
 
 const QuizPage = () => {
     const [loading, setLoading] = useState(true);
+    const [isShaking, setIsShaking] = useState(false);
     const loggedIn = useSelector(state => state.user.loggedIn);
     const [listQuestion, setListQuestion] = useState([]);
     const [question, setQuestion] = useState('');
@@ -22,6 +25,7 @@ const QuizPage = () => {
     const [progress, setProgress] = useState(0);
     const [numberOfQuestions, setNumberOfQuestions] = useState(0);
     const [correctQuestions, setCorrectQuestions] = useState(0);
+    const [remainingLives, setRemainingLives] = useState(3);
     const [questionState, setQuestionState] = useState(null);
     const [selectedOption, setSelectedOption] = useState('');
     const [typedAnswer, setTypedAnswer] = useState('');
@@ -31,6 +35,7 @@ const QuizPage = () => {
     const [endTime, setEndTime] = useState(null);
     const requiredXp = 8;
 
+    
     useEffect(() => {
         const fetchQuiz = async () => {
             try {
@@ -61,6 +66,18 @@ const QuizPage = () => {
     if (!loggedIn) {
         return <Navigate to="/login" />;
     }
+
+    useEffect(() => {
+        setIsShaking(true);
+
+        // Reset animation after 500ms (duration of animation)
+        const timer = setTimeout(() => {
+            setIsShaking(false);
+        }, 500);
+
+        return () => clearTimeout(timer);
+
+      }, [remainingLives]);
 
     const randomQuestion = (questions) => {
         if (questions.length === 0) return;
@@ -94,7 +111,7 @@ const QuizPage = () => {
     };
 
     const handleNextQuestion = () => {
-        if (questionDone === numberOfQuestions) {
+        if (questionDone === numberOfQuestions || remainingLives === 0) {
             setQuizComplete(true);
         } else {
             setQuestionState(null);
@@ -103,7 +120,7 @@ const QuizPage = () => {
     };
 
 
-    const checkAnswer = (selectedAnswer) => {
+    const checkAnswer = async (selectedAnswer) => {
         const normalizedAnswer = selectedAnswer.toLowerCase().trim();
 
         // Increment questionDone and check if the answer is correct
@@ -117,6 +134,7 @@ const QuizPage = () => {
                 setCorrectQuestions(prevCorrectQuestions => prevCorrectQuestions + 1);
             } else {
                 setQuestionState('incorrect');
+                setRemainingLives(remainingLives - 1);
             }
 
             // Calculate progress based on the new questionDone value
@@ -132,6 +150,7 @@ const QuizPage = () => {
             // Log the values for debugging
             console.log("Question Done:", newQuestionDone);
             console.log("Progress:", newProgress);
+            console.log('Remaining Lives:', remainingLives)
 
             return newQuestionDone;
         });
@@ -151,9 +170,10 @@ const QuizPage = () => {
         try {
             const xp = correctQuestions * 10 / numberOfQuestions;
             if (xp >= requiredXp) {
-                const response = await axios.put(`${import.meta.env.VITE_APP_API_URL}/user/update-experience`,
+                const response = await axios.put(`${import.meta.env.VITE_APP_API_URL}/progress/update`,
                     {
-                        experience: xp
+                        score: xp,
+                        quizId: quizId
                     },
                     {
                         withCredentials: true,
@@ -165,7 +185,6 @@ const QuizPage = () => {
 
                 if (response.status === 200) {
                     localStorage.setItem('csrfToken', response.headers['x-csrf-token'])
-                    console.log("Experience updated successfully");
                 }
             } else {
                 console.log("Your score is not high enough to update experience");
@@ -214,6 +233,15 @@ const QuizPage = () => {
                                 style={{ width: `${progress}%` }}>
                                 <div className="bg-white/30 h-1 rounded-2xl" />
                             </div>
+                        </div>
+
+                        <div className="flex items-center ml-5">
+                            <span className={`font-bold ${isShaking ? 'animate-shake' : ''}`}>{remainingLives}</span>
+
+                            <img
+                                src={heart}
+                                alt="Remaining Lives"
+                                className="w-10" />
                         </div>
                     </div>
                 </div>
