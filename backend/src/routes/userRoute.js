@@ -39,17 +39,11 @@ router.post('/reset-password/:token', userController.resetPassword);
 // VALIDATE RESET TOKEN
 router.post('/validate-reset-token', userController.validateResetToken);
 
-// UPDATE EXPERIENCE
-router.put('/experience', verifyJWT, verifyCsrfToken, csrfMiddleware, userController.updateExperience);
-
 // REFRESH TOKEN
 router.post('/refresh-token', userController.refreshToken);
 
 // GET EXPERIENCE 
 router.get('/experience', verifyJWT, userController.getExperienceAllUsers);
-
-// USER UPDATE EXPERIENCE
-router.put('/update-experience', verifyJWT, verifyCsrfToken, csrfMiddleware, userController.updateExperience);
 
 // GET ALL USERS
 router.get('/all', verifyJWT, isAdmin, userController.getAllUsers);
