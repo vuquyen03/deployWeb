@@ -625,7 +625,7 @@ const userController = {
         try {
             const userId = req.params.id;
             const user = await User.findById(userId);
-            if (user.role !== 'admin') {
+            if (user.role == 'admin') {
                 return new Unauthorized({ message: 'You are not authorized to delete this account', req }).send(res);
             }
 
