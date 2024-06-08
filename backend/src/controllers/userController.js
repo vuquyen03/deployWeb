@@ -63,7 +63,12 @@ const userController = {
                     if (username.length < 3) {
                         throw new BadRequest({ message: 'Username must be at least 3 characters', req }, 'info');
                     }
-    
+                    
+                    // check if email is valid
+                    if (!validator.isEmail(email)) {
+                        throw new BadRequest({ message: 'Invalid email', req }, 'info');
+                    }
+
                     // check if user already exists
                     const existingUser = await User.findOne({ username });
                     if (existingUser) {
@@ -146,6 +151,11 @@ const userController = {
                 try {
                     if (!email || !password) {
                         throw new BadRequest({ message: 'All fields are required', req }, 'info');
+                    }
+
+                    // check if email is valid
+                    if (!validator.isEmail(email)) {
+                        throw new BadRequest({ message: 'Invalid email', req }, 'info');
                     }
         
                     const user = await User.findOne({ email }).select('-refreshToken -passwordHistory -resetPasswordToken -resetPasswordExpires -verifyToken');
@@ -614,11 +624,15 @@ const userController = {
     adminDeleteAccount: async (req, res) => {
         try {
             const userId = req.params.id;
+            const user = await User.findById(req.user._id);
+            if (user.role !== 'admin') {
+                return new Unauthorized({ message: 'You are not authorized to delete this account', req }).send(res);
+            }
+
             await Promise.all([
                 User.findByIdAndDelete(userId),
                 Progress.deleteOne({ user: userId })
             ])
-    
             new SuccessResponse({ message: 'Account deleted successfully', req }).send(res);
         } catch (error) {
             return new InternalServerError({ message: error.message, req }).send(res);
@@ -630,11 +644,18 @@ const userController = {
     adminDeleteManyAccount: async (req, res) => {
         try {
             const userIds = req.body.ids;
+            const usersToDelete = await User.find({ _id: { $in: userIds } });
+            const adminUsersToDelete = usersToDelete.filter(user => user.role === 'admin');
+    
+            // If an admin tries to delete an admin account
+            if (adminUsersToDelete.length > 0) {
+                return new Unauthorized({ message: 'Admin accounts cannot be deleted', req }).send(res);
+            }
+
             await Promise.all([
                 User.deleteMany({ _id: { $in: userIds } }),
                 Progress.deleteMany({ user: { $in: userIds } })
             ]);
-
             new SuccessResponse({ message: 'Accounts deleted successfully', req }).send(res);
         } catch (error) {
             return handleErrorResponse(error, req, res);
